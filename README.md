@@ -94,7 +94,7 @@ npm install
 
 ### Build the on-chain program
 
-There is both a Rust and C version of the on-chain program, whichever is built
+There is both a Rust, C and WASM version of the on-chain program, whichever is built
 last will be the one used when running the example.
 
 ```bash
@@ -105,10 +105,20 @@ npm run build:program-rust
 npm run build:program-c
 ```
 
+```bash
+npm run build:program-wasm
+```
+
 ### Deploy the on-chain program
+
+Run one of commands:
 
 ```bash
 domichain program deploy dist/program/helloworld.so
+```
+
+```bash
+domichain program deploy dist/program/helloworld.wasm
 ```
 
 ### Run the JavaScript client

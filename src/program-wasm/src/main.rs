@@ -16,7 +16,7 @@ fn main() -> Result<()> {
     // // Wasmi does not yet support parsing `.wat` so we have to convert
     // // out `.wat` into `.wasm` before we compile and validate it.
     let wasm = wat::parse_str(&wat)?;
-    std::fs::write(".dist/program/helloworld.wasm", &wasm).unwrap();
+    std::fs::write("./dist/program/helloworld.wasm", &wasm).unwrap();
     let module = Module::new(&engine, &mut &wasm[..])?;
 
     // All Wasm objects operate within the context of a `Store`.
@@ -24,10 +24,9 @@ fn main() -> Result<()> {
     // which in this case we are using `42` for.
     type HostState = u32;
     let mut store = Store::new(&engine, 42);
-    let host_hello = Func::wrap(&mut store, |mut caller: Caller<'_, HostState>, param: i32| {
+    let host_hello = Func::wrap(&mut store, |caller: Caller<'_, HostState>, param: i32| {
         println!("Got {param} from WebAssembly");
         println!("My host state is: {}", caller.data());
-        *caller.data_mut() += 1;
     });
 
     // In order to create Wasm module instances and link their imports
