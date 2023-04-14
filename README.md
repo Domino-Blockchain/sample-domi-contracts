@@ -18,7 +18,7 @@ To install WASM build tools:
 rustup update
 rustup toolchain install nightly
 
-# Install the Solana CLI for BPF (to be able generate keypair in `dist/program`)
+# Install the Solana CLI for BPF (to be able to generate keypair in `dist/program`)
 # https://docs.solana.com/cli/install-solana-cli-tools
 sh -c "$(curl -sSfL https://release.solana.com/v1.15.2/install)"
 # Install WASM build tool
@@ -26,7 +26,6 @@ cargo install cargo-wasi
 
 domichain config set --url http://127.0.0.1:8899
 domichain-keygen new
-# 
 ```
 
 To build and run WASM smart contract:
