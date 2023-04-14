@@ -10,6 +10,48 @@ The project comprises of:
 * A client that can send a "hello" to an account and get back the number of
   times "hello" has been sent
 
+## WASM Fast Start
+
+To install WASM build tools:
+```shell
+# Update Rust
+rustup update
+rustup toolchain install nightly
+
+# Install the Solana CLI for BPF (to be able generate keypair in `dist/program`)
+# https://docs.solana.com/cli/install-solana-cli-tools
+sh -c "$(curl -sSfL https://release.solana.com/v1.15.2/install)"
+# Install WASM build tool
+cargo install cargo-wasi
+
+domichain config set --url http://127.0.0.1:8899
+domichain-keygen new
+# 
+```
+
+```shell
+# Tab 1 (domichain)
+NDEBUG=1 ./multinode-demo/setup.sh && NDEBUG=1 ./multinode-demo/faucet.sh
+# Tab 2 (domichain)
+RUST_LOG=OFF NDEBUG=1 ./multinode-demo/bootstrap-validator.sh --allow-private-addr
+
+# Tab 3 (sample-domi-contracts)
+npm install
+npm run build:program-wasm
+domichain program deploy dist/program/helloworld.wasm # airdrop in case of error
+npm run start
+# See the logs in "Tab 2"
+
+# After code changes. To retry:
+npm run build:program-wasm
+domichain program deploy dist/program/helloworld.wasm
+npm run start
+
+# To check WebAssembly Text of binary
+# Download utility from: https://github.com/WebAssembly/wabt/releases
+wasm2wat dist/program/helloworld.wasm
+```
+
 ## Translations
 - [Traditional Chinese](README_ZH_TW.md)
 - [Simplified Chinese](README_ZH_CN.md)

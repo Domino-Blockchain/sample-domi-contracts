@@ -1,60 +1,100 @@
-#![no_std]
+use borsh::{BorshDeserialize, BorshSerialize};
+use solana_program::{
+    account_info::{next_account_info, AccountInfo},
+    entrypoint,
+    entrypoint::ProgramResult,
+    msg,
+    program_error::ProgramError,
+    pubkey::Pubkey,
+};
 
-mod domichain_program;
-
-use domichain_program::*;
-
-// TODO: deserialize input
-#[no_mangle]
-pub unsafe extern "C" fn entrypoint(_input: *mut u8) -> u64 {
-    //     let program_id = Default::default();
-    //     let mut _lamports = 0;
-    //     let mut _data = [];
-    //     let lamports = Rc::new(RefCell::new(&mut _lamports));
-    //     let data = Rc::new(RefCell::new(&mut _data));
-    //     let accounts = [AccountInfo {
-    //         key: &program_id,
-    //         /// Was the transaction signed by this account's public key?
-    //         is_signer: false,
-    //         /// Is the account writable?
-    //         is_writable: false,
-    //         /// The lamports in the account.  Modifiable by programs.
-    //         lamports,
-    //         /// The data held in this account.  Modifiable by programs.
-    //         data,
-    //         /// Program that owns this account
-    //         owner: &program_id,
-    //         /// This account's data contains a loaded program (and is now read-only)
-    //         executable: false,
-    //         /// The epoch at which this account will next owe rent
-    //         rent_epoch: Default::default(),
-    //     }];
-    //     let instruction_data = [];
-    match process_instruction() {
-        Ok(()) => 0,
-        Err(error) => error.into(),
-    }
+/// Define the type of state stored in accounts
+#[derive(BorshSerialize, BorshDeserialize, Debug)]
+pub struct GreetingAccount {
+    /// number of greetings
+    pub counter: u32,
 }
 
-// TODO: use WASM allocator
-// #[global_allocator]
-// static A: solana_program::entrypoint::BumpAllocator = solana_program::entrypoint::BumpAllocator {
-//     start: solana_program::entrypoint::HEAP_START_ADDRESS as usize,
-//     len: solana_program::entrypoint::HEAP_LENGTH,
-// };
+// Declare and export the program's entrypoint
+entrypoint!(process_instruction);
 
-// TODO: use WASM panic handler
-#[no_mangle]
-#[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
-}
-
+// Program entrypoint's implementation
 pub fn process_instruction(
-    // _program_id: &Pubkey,
-    // _accounts: &[AccountInfo],
-    // _instruction_data: &[u8],
+    program_id: &Pubkey, // Public key of the account the hello world program was loaded into
+    accounts: &[AccountInfo], // The account to say hello to
+    _instruction_data: &[u8], // Ignored, all helloworld instructions are hellos
 ) -> ProgramResult {
-    msg!("Hello from syscall!");
+    msg!("Hello World Rust program entrypoint");
+
+    // Iterating accounts is safer than indexing
+    let accounts_iter = &mut accounts.iter();
+
+    // Get the account to say hello to
+    let account = next_account_info(accounts_iter)?;
+
+    // The account must be owned by the program in order to modify its data
+    if account.owner != program_id {
+        msg!("Greeted account does not have the correct program id");
+        return Err(ProgramError::IncorrectProgramId);
+    }
+
+    // Increment and store the number of times the account has been greeted
+    let mut greeting_account = GreetingAccount::try_from_slice(&account.data.borrow())?;
+    greeting_account.counter += 1;
+    greeting_account.serialize(&mut &mut account.data.borrow_mut()[..])?;
+
+    msg!("Greeted {} time(s)!", greeting_account.counter);
+
     Ok(())
+}
+
+// Sanity tests
+#[cfg(test)]
+mod test {
+    use super::*;
+    use solana_program::clock::Epoch;
+    use std::mem;
+
+    #[test]
+    fn test_sanity() {
+        let program_id = Pubkey::default();
+        let key = Pubkey::default();
+        let mut lamports = 0;
+        let mut data = vec![0; mem::size_of::<u32>()];
+        let owner = Pubkey::default();
+        let account = AccountInfo::new(
+            &key,
+            false,
+            true,
+            &mut lamports,
+            &mut data,
+            &owner,
+            false,
+            Epoch::default(),
+        );
+        let instruction_data: Vec<u8> = Vec::new();
+
+        let accounts = vec![account];
+
+        assert_eq!(
+            GreetingAccount::try_from_slice(&accounts[0].data.borrow())
+                .unwrap()
+                .counter,
+            0
+        );
+        process_instruction(&program_id, &accounts, &instruction_data).unwrap();
+        assert_eq!(
+            GreetingAccount::try_from_slice(&accounts[0].data.borrow())
+                .unwrap()
+                .counter,
+            1
+        );
+        process_instruction(&program_id, &accounts, &instruction_data).unwrap();
+        assert_eq!(
+            GreetingAccount::try_from_slice(&accounts[0].data.borrow())
+                .unwrap()
+                .counter,
+            2
+        );
+    }
 }

@@ -22,7 +22,7 @@
     "test:program-rust": "cargo test-bpf --manifest-path=./src/program-rust/Cargo.toml",
     "build:program-wat": "npm run build:program-rust && cargo run --manifest-path=./src/program-wat/Cargo.toml",
     "clean:program-wat": "npm run clean:program-rust && cargo clean --manifest-path=./src/program-wat/Cargo.toml && rm -rf ./dist",
-    "build:program-wasm": "npm run build:program-rust && cargo wasi build --release --manifest-path=./src/program-wasm/Cargo.toml",
+    "build:program-wasm": "npm run build:program-rust && cd ./src/program-wasm && cargo wasi build --release && cd - && cp src/program-wasm/target/wasm32-wasi/release/helloworld.wasm dist/program/helloworld.wasm",
     "clean:program-wasm": "npm run clean:program-rust && cargo clean --manifest-path=./src/program-wasm/Cargo.toml && rm -rf ./dist",
     "pretty": "prettier --write '{,src/**/}*.ts'"
   },
