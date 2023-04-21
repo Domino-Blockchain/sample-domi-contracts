@@ -33,7 +33,9 @@ To build and run WASM smart contract:
 # Tab 1 (domichain)
 NDEBUG=1 ./multinode-demo/setup.sh && NDEBUG=1 ./multinode-demo/faucet.sh
 # Tab 2 (domichain)
-RUST_LOG=OFF NDEBUG=1 ./multinode-demo/bootstrap-validator.sh --allow-private-addr
+RUST_LOG=OFF NDEBUG=1 ./multinode-demo/bootstrap-validator.sh --allow-private-addr --enable-rpc-transaction-history
+# Tab 3 (domichain)
+domichain logs --url localhost --output json -v
 
 # Tab 3 (sample-domi-contracts)
 npm install
@@ -41,7 +43,7 @@ npm run build:program-wasm
 domichain airdrop 500 ~/.config/domichain/id.json
 domichain program deploy dist/program/helloworld.wasm # airdrop in case of error
 npm run start
-# See the logs in "Tab 2"
+# See the logs in "Tab 3"
 
 # After code changes you could retry this steps:
 npm run build:program-wasm
