@@ -47,6 +47,7 @@ use {
     // std::convert::TryFrom,
     // thiserror::Error,
 };
+use borsh::{BorshDeserialize, BorshSerialize};
 
 
 
@@ -457,6 +458,76 @@ macro_rules! stack_msg {
 // #[cfg(target_arch = "bpf")]
 extern "C" {
     fn sol_log_(message: *const u8, len: u64);
+
+    fn sol_sha256(vals: *const u8, val_len: u64, hash_result: *mut u8) -> u64;
+
+    fn sol_keccak256(vals: *const u8, val_len: u64, hash_result: *mut u8) -> u64;
+}
+
+/// Return a Keccak256 hash for the given data.
+pub fn hashv(vals: &[&[u8]]) -> Hash {
+    // Call via a system call to perform the calculation
+    let mut hash_result = [0; HASH_BYTES];
+    unsafe {
+        sol_keccak256(
+            vals as *const _ as *const u8,
+            vals.len() as u64,
+            &mut hash_result as *mut _ as *mut u8,
+        );
+    }
+    Hash::new_from_array(hash_result)
+}
+
+/// Return a Keccak256 hash for the given data.
+pub fn hash(val: &[u8]) -> Hash {
+    hashv(&[val])
+}
+
+pub const HASH_BYTES: usize = 32;
+/// Maximum string length of a base58 encoded hash
+const MAX_BASE58_LEN: usize = 44;
+#[derive(
+    BorshSerialize,
+    BorshDeserialize,
+    Clone,
+    Copy,
+    Default,
+    Eq,
+    PartialEq,
+    Ord,
+    PartialOrd,
+    Hash,
+)]
+#[repr(transparent)]
+pub struct Hash(pub [u8; HASH_BYTES]);
+
+impl AsRef<[u8]> for Hash {
+    fn as_ref(&self) -> &[u8] {
+        &self.0[..]
+    }
+}
+
+use std::fmt;
+impl fmt::Debug for Hash {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", bs58::encode(self.0).into_string())
+    }
+}
+
+impl fmt::Display for Hash {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", bs58::encode(self.0).into_string())
+    }
+}
+
+impl Hash {
+    pub fn new(hash_slice: &[u8]) -> Self {
+        Hash(<[u8; HASH_BYTES]>::try_from(hash_slice).unwrap())
+    }
+
+    pub const fn new_from_array(hash_array: [u8; HASH_BYTES]) -> Self {
+        Self(hash_array)
+    }
 }
 
 

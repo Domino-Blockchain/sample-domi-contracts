@@ -399,6 +399,7 @@ version = "0.0.1"
 dependencies = [
  "borsh",
  "borsh-derive 0.10.3",
+ "bs58",
  "num-traits",
  "thiserror",
 ]

@@ -17,6 +17,7 @@ use domichain_program::{
     ProgramResult,
     ProgramError,
     next_account_info,
+    hash,
 };
 
 /// Define the type of state stored in accounts
@@ -56,6 +57,9 @@ pub fn process_instruction(
     greeting_account.serialize(&mut &mut account.data.borrow_mut()[..])?;
 
     msg!("Greeted {} time(s)!", greeting_account.counter);
+
+    let val = &[170, 170];
+    msg!("keccak256 bs58 hash of {val:?} is {:?}", hash(val));
 
     Ok(())
 }
