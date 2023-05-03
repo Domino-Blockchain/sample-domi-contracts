@@ -310,7 +310,7 @@ dependencies = [
  "autocfg",
  "cfg-if",
  "crossbeam-utils",
- "memoffset",
+ "memoffset 0.8.0",
  "scopeguard",
 ]
 
@@ -394,12 +394,95 @@ dependencies = [
 ]
 
 [[package]]
+name = "domichain-frozen-abi"
+version = "1.11.1"
+dependencies = [
+ "bs58",
+ "bv",
+ "domichain-frozen-abi-macro",
+ "generic-array",
+ "im",
+ "lazy_static",
+ "log",
+ "memmap2",
+ "rustc_version",
+ "serde",
+ "serde_bytes",
+ "serde_derive",
+ "sha2 0.10.6",
+ "thiserror",
+]
+
+[[package]]
+name = "domichain-frozen-abi-macro"
+version = "1.11.1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "rustc_version",
+ "syn 1.0.109",
+]
+
+[[package]]
+name = "domichain-program"
+version = "1.11.1"
+dependencies = [
+ "base64 0.13.1",
+ "bincode",
+ "bitflags",
+ "blake3",
+ "borsh",
+ "borsh-derive 0.9.3",
+ "bs58",
+ "bv",
+ "bytemuck",
+ "console_error_panic_hook",
+ "console_log",
+ "curve25519-dalek",
+ "domichain-frozen-abi",
+ "domichain-frozen-abi-macro",
+ "domichain-sdk-macro",
+ "getrandom 0.1.16",
+ "itertools",
+ "js-sys",
+ "lazy_static",
+ "libsecp256k1",
+ "log",
+ "memoffset 0.6.5",
+ "num-derive",
+ "num-traits",
+ "parking_lot",
+ "rand",
+ "rustc_version",
+ "rustversion",
+ "serde",
+ "serde_bytes",
+ "serde_derive",
+ "sha2 0.10.6",
+ "sha3",
+ "thiserror",
+ "wasm-bindgen",
+]
+
+[[package]]
+name = "domichain-sdk-macro"
+version = "1.11.1"
+dependencies = [
+ "bs58",
+ "proc-macro2",
+ "quote",
+ "rustversion",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "domichain-wasm-helloworld"
 version = "0.0.1"
 dependencies = [
  "borsh",
  "borsh-derive 0.10.3",
  "bs58",
+ "domichain-program",
  "num-traits",
  "thiserror",
 ]
@@ -658,6 +741,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "83faa42c0a078c393f6b29d5db232d8be22776a891f8f56e5284faee4a20b327"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "memoffset"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5aa361d4faea93603064a027415f07bd8e1d5c88c9fbf68bf56a285428fd79ce"
+dependencies = [
+ "autocfg",
 ]
 
 [[package]]

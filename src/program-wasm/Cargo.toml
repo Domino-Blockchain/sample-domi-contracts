@@ -10,6 +10,7 @@ edition = "2021"
 
 [dependencies]
 # solana-program = "=1.10.35"
+domichain-program = {path = "../../../domichain/sdk/program"}
 borsh = "0.9.3"
 borsh-derive = "0.10.0"
 thiserror = "1.0"

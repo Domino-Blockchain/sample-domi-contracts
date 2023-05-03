@@ -1,23 +1,13 @@
 mod write_to;
-mod domichain_program;
 
 use borsh::{BorshDeserialize, BorshSerialize};
-// use solana_program::{
-//     account_info::AccountInfo,
-//     entrypoint,
-//     entrypoint::ProgramResult,
-//     msg,
-//     pubkey::Pubkey,
-// };
-
-// TODO: modify domichain_program in domichain repo
 use domichain_program::{
-    Pubkey,
-    AccountInfo,
-    ProgramResult,
-    ProgramError,
-    next_account_info,
-    hash,
+    account_info::{AccountInfo, next_account_info},
+    entrypoint,
+    entrypoint::ProgramResult,
+    msg,
+    pubkey::Pubkey, program_error::ProgramError, keccak::hash,
+    
 };
 
 /// Define the type of state stored in accounts
