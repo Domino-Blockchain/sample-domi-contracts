@@ -10,6 +10,7 @@ import {
   TransactionInstruction,
   Transaction,
   sendAndConfirmTransaction,
+  ComputeBudgetProgram,
 } from '@solana/web3.js';
 import fs from 'mz/fs';
 import path from 'path';
@@ -205,16 +206,24 @@ export async function checkProgram(): Promise<void> {
 /**
  * Say hello
  */
-export async function sayHello(): Promise<void> {
+export async function sayHello(computeBudgetUnits=undefined): Promise<void> {
   console.log('Saying hello to', greetedPubkey.toBase58());
   const instruction = new TransactionInstruction({
     keys: [{pubkey: greetedPubkey, isSigner: false, isWritable: true}],
     programId,
     data: Buffer.alloc(0), // All instructions are hellos
   });
+  const tx = new Transaction();
+  tx.add(instruction);
+  if (computeBudgetUnits !== undefined) {
+    tx.add(ComputeBudgetProgram.requestUnits({
+      units: computeBudgetUnits,
+      additionalFee: 0,
+    }));
+  }
   await sendAndConfirmTransaction(
     connection,
-    new Transaction().add(instruction),
+    tx,
     [payer],
   );
 }

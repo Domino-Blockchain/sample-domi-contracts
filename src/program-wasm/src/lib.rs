@@ -49,7 +49,14 @@ pub fn process_instruction(
     let val = &[170, 170];
     msg!("keccak256 bs58 hash of {val:?} is {:?}", hash(val));
 
-    // loop {}
+    let mut i = 0;
+    loop {
+        i += 1;
+        msg!("test {}", i);
+        if i == 20 {
+            break;
+        }
+    }
 
     Ok(())
 }

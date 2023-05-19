@@ -43,6 +43,8 @@ npm run build:program-wasm
 domichain airdrop 500 ~/.config/domichain/id.json
 domichain program deploy dist/program/helloworld.wasm # airdrop in case of error
 npm run start
+# OR
+npm run start -- --compute_units 400000
 # See the logs in "Tab 3"
 
 # After code changes you could retry this steps:
