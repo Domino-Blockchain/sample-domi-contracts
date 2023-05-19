@@ -1,5 +1,3 @@
-mod write_to;
-
 use borsh::{BorshDeserialize, BorshSerialize};
 use domichain_program::{
     account_info::{AccountInfo, next_account_info},
@@ -50,6 +48,8 @@ pub fn process_instruction(
 
     let val = &[170, 170];
     msg!("keccak256 bs58 hash of {val:?} is {:?}", hash(val));
+
+    // loop {}
 
     Ok(())
 }
