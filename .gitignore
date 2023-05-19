@@ -6,3 +6,7 @@
 src/client/util/store
 test-ledger/
 .DS_Store
+.idea
+*.wat
+*.wasm
+/target

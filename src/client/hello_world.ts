@@ -10,6 +10,7 @@ import {
   TransactionInstruction,
   Transaction,
   sendAndConfirmTransaction,
+  ComputeBudgetProgram,
 } from '@solana/web3.js';
 import fs from 'mz/fs';
 import path from 'path';
@@ -89,8 +90,15 @@ const GREETING_SIZE = borsh.serialize(
 export async function establishConnection(): Promise<void> {
   const rpcUrl = await getRpcUrl();
   connection = new Connection(rpcUrl, 'confirmed');
-  const version = await connection.getVersion();
-  console.log('Connection to cluster established:', rpcUrl, version);
+
+  // FIXME: Enable getVersion() API for Domichain
+  // const version = await connection.getVersion();
+  
+  console.log(
+    'Connection to cluster established:',
+    rpcUrl,
+    // version,
+  );
 }
 
 /**
@@ -126,7 +134,7 @@ export async function establishPayer(): Promise<void> {
     payer.publicKey.toBase58(),
     'containing',
     lamports / LAMPORTS_PER_SOL,
-    'SOL to pay for fees',
+    'DOMI to pay for fees',
   );
 }
 
@@ -141,7 +149,7 @@ export async function checkProgram(): Promise<void> {
   } catch (err) {
     const errMsg = (err as Error).message;
     throw new Error(
-      `Failed to read program keypair at '${PROGRAM_KEYPAIR_PATH}' due to error: ${errMsg}. Program may need to be deployed with \`solana program deploy dist/program/helloworld.so\``,
+      `Failed to read program keypair at '${PROGRAM_KEYPAIR_PATH}' due to error: ${errMsg}. Program may need to be deployed with \`domichain program deploy dist/program/helloworld.so\``,
     );
   }
 
@@ -150,7 +158,7 @@ export async function checkProgram(): Promise<void> {
   if (programInfo === null) {
     if (fs.existsSync(PROGRAM_SO_PATH)) {
       throw new Error(
-        'Program needs to be deployed with `solana program deploy dist/program/helloworld.so`',
+        'Program needs to be deployed with `domichain program deploy dist/program/helloworld.so`',
       );
     } else {
       throw new Error('Program needs to be built and deployed');
@@ -198,16 +206,24 @@ export async function checkProgram(): Promise<void> {
 /**
  * Say hello
  */
-export async function sayHello(): Promise<void> {
+export async function sayHello(computeBudgetUnits=undefined): Promise<void> {
   console.log('Saying hello to', greetedPubkey.toBase58());
   const instruction = new TransactionInstruction({
     keys: [{pubkey: greetedPubkey, isSigner: false, isWritable: true}],
     programId,
     data: Buffer.alloc(0), // All instructions are hellos
   });
+  const tx = new Transaction();
+  tx.add(instruction);
+  if (computeBudgetUnits !== undefined) {
+    tx.add(ComputeBudgetProgram.requestUnits({
+      units: computeBudgetUnits,
+      additionalFee: 0,
+    }));
+  }
   await sendAndConfirmTransaction(
     connection,
-    new Transaction().add(instruction),
+    tx,
     [payer],
   );
 }
