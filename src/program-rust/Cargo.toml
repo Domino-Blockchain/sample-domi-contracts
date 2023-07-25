@@ -1,6 +1,5 @@
-
 [package]
-name = "solana-bpf-helloworld"
+name = "domichain-bpf-helloworld"
 version = "0.0.1"
 description = "Example template program written in Rust"
 authors = ["Solana Maintainers <maintainers@solana.com>"]
@@ -15,11 +14,16 @@ no-entrypoint = []
 [dependencies]
 borsh = "0.9.3"
 borsh-derive = "0.10.0"
-solana-program = "~1.10.35"
+solana-program = "=1.10.35"
+solana-frozen-abi = "=1.10.35"
+solana-frozen-abi-macro = "=1.10.35"
 
-[dev-dependencies]
-solana-program-test = "~1.10.35"
-solana-sdk = "~1.10.35"
+# [dev-dependencies]
+# solana-program-test = "~1.10.35"
+# solana-sdk = "~1.10.35"
+# getrandom = { version = "0.1.14", features = ["dummy"] }
+# getrandom02 = { version = "0.2.2", features = ["custom"], package = "getrandom" }
+# rayon-core = "1.9.1"
 
 [lib]
 name = "helloworld"

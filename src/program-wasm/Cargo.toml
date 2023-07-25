@@ -1,0 +1,29 @@
+[package]
+name = "domichain-wasm-helloworld"
+version = "0.0.1"
+description = "Example template program written in Rust"
+authors = ["Solana Maintainers <maintainers@solana.com>"]
+repository = "https://github.com/solana-labs/solana"
+license = "Apache-2.0"
+homepage = "https://solana.com/"
+edition = "2021"
+
+[dependencies]
+# solana-program = "=1.10.35"
+domichain-program = {path = "../../../domichain/sdk/program"}
+borsh = "0.9.3"
+borsh-derive = "0.10.0"
+thiserror = "1.0"
+num-traits = "0.2"
+bs58 = "0.4.0"
+
+[features]
+no-entrypoint = []
+
+[lib]
+name = "helloworld"
+crate-type = ["cdylib", "lib"]
+
+[profile.release]
+lto = true
+opt-level = 'z'

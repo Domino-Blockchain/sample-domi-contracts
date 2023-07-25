@@ -1,6 +1,7 @@
 /**
  * Hello world
  */
+import minimist from 'minimist';
 
 import {
   establishConnection,
@@ -11,7 +12,9 @@ import {
 } from './hello_world';
 
 async function main() {
-  console.log("Let's say hello to a Solana account...");
+  const argv = minimist(process.argv.slice(2));
+
+  console.log("Let's say hello to a Domichain account...");
 
   // Establish connection to the cluster
   await establishConnection();
@@ -23,7 +26,7 @@ async function main() {
   await checkProgram();
 
   // Say hello to an account
-  await sayHello();
+  await sayHello(argv.compute_units);
 
   // Find out how many times that account has been greeted
   await reportGreetings();
