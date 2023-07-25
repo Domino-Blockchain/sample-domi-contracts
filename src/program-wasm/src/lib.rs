@@ -46,8 +46,8 @@ pub fn process_instruction(
 
     msg!("Greeted {} time(s)!", greeting_account.counter);
 
-    let val = &[170, 170];
-    msg!("keccak256 bs58 hash of {val:?} is {:?}", hash(val));
+    let val = &[170, 170].to_vec();
+    msg!("keccak256 bs58 hash of {val:?} is {:?}", hash(&val));
 
     let mut i = 0;
     loop {
